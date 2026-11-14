@@ -24,3 +24,4 @@ class EnsureCredentialsChanged
         return $next($request);
     }
 }
+

@@ -62,3 +62,4 @@ class GoalController extends Controller
         ], 200);
     }
 }
+

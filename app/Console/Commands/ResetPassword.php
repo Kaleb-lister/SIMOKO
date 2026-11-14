@@ -56,3 +56,4 @@ class ResetPassword extends Command
         return Command::SUCCESS;
     }
 }
+

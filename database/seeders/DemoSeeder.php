@@ -102,3 +102,4 @@ class DemoSeeder extends Seeder
         $device->update(['last_reported_balance' => $runningBalance]);
     }
 }
+

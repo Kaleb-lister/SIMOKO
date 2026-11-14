@@ -120,3 +120,4 @@ class AccountController extends Controller
         return redirect()->route('account.edit')->with('status', 'Profil akun berhasil diperbarui.');
     }
 }
+

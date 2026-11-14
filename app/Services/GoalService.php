@@ -48,3 +48,4 @@ class GoalService
         return $latestGoal->fresh();
     }
 }
+

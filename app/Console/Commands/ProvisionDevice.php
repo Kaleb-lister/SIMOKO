@@ -82,3 +82,4 @@ class ProvisionDevice extends Command
         return Command::SUCCESS;
     }
 }
+

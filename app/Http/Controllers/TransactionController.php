@@ -181,3 +181,4 @@ class TransactionController extends Controller
         return redirect()->back()->with('status', 'Transaksi berhasil dibatalkan.');
     }
 }
+

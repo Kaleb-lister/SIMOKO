@@ -52,3 +52,4 @@ class RotateToken extends Command
         return Command::SUCCESS;
     }
 }
+

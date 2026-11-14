@@ -17,3 +17,4 @@ class BalanceService
             ->sum('amount');
     }
 }
+

@@ -46,3 +46,4 @@ class AuthenticateDevice
         return $next($request);
     }
 }
+

@@ -89,3 +89,4 @@ class EtaCalculatorTest extends TestCase
         $this->assertEquals(500, $result['daily_average']);
     }
 }
+
