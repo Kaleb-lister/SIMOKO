@@ -1,0 +1,329 @@
+{
+	"info": {
+		"_postman_id": "simoko-api-contract-v1",
+		"name": "SIMOKO API Contract v1",
+		"description": "Koleksi Postman untuk pengujian API SIMOKO (celengan pintar ESP32) berdasarkan Lampiran A.5 SIMOKO_WEB_PLAN.md",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "device_token",
+			"value": "demo-token-123456789012345678901234567890",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "01. Tanpa Header Authorization (Harap: 401)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firmware\": \"0.3.0\",\n  \"events\": []\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/events",
+					"host": ["{{base_url}}"],
+					"path": ["device", "events"]
+				}
+			}
+		},
+		{
+			"name": "02. Token Salah (Harap: 401)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer token_palsu_12345"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firmware\": \"0.3.0\",\n  \"events\": []\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/events",
+					"host": ["{{base_url}}"],
+					"path": ["device", "events"]
+				}
+			}
+		},
+		{
+			"name": "03. Batch 1 Deposit Valid (Harap: 200 created)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{device_token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firmware\": \"0.3.0\",\n  \"events\": [\n    {\n      \"event_id\": \"b1c2d3e4-101\",\n      \"type\": \"deposit\",\n      \"amount\": 500,\n      \"coin_value\": 500,\n      \"weight_delta_g\": 3.12,\n      \"occurred_at\": \"2026-11-15T03:20:10Z\",\n      \"uptime_ms\": 1234567,\n      \"balance_after\": 500\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/events",
+					"host": ["{{base_url}}"],
+					"path": ["device", "events"]
+				}
+			}
+		},
+		{
+			"name": "04. Kirim Ulang Body Persis Sama / Idempoten (Harap: 200 duplicate)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{device_token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firmware\": \"0.3.0\",\n  \"events\": [\n    {\n      \"event_id\": \"b1c2d3e4-101\",\n      \"type\": \"deposit\",\n      \"amount\": 500,\n      \"coin_value\": 500,\n      \"weight_delta_g\": 3.12,\n      \"occurred_at\": \"2026-11-15T03:20:10Z\",\n      \"uptime_ms\": 1234567,\n      \"balance_after\": 500\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/events",
+					"host": ["{{base_url}}"],
+					"path": ["device", "events"]
+				}
+			}
+		},
+		{
+			"name": "05. Batch Campuran Valid + Pecahan Salah 300 (Harap: 200 created & rejected)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{device_token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firmware\": \"0.3.0\",\n  \"events\": [\n    {\n      \"event_id\": \"b1c2d3e4-102\",\n      \"type\": \"deposit\",\n      \"amount\": 1000,\n      \"coin_value\": 1000,\n      \"weight_delta_g\": 4.5,\n      \"occurred_at\": \"2026-11-15T03:21:00Z\"\n    },\n    {\n      \"event_id\": \"b1c2d3e4-103\",\n      \"type\": \"deposit\",\n      \"amount\": 300,\n      \"coin_value\": 300,\n      \"weight_delta_g\": 2.8,\n      \"occurred_at\": \"2026-11-15T03:21:05Z\"\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/events",
+					"host": ["{{base_url}}"],
+					"path": ["device", "events"]
+				}
+			}
+		},
+		{
+			"name": "06. Event occurred_at null / Jam Offline (Harap: 200 created, time_estimated)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{device_token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firmware\": \"0.3.0\",\n  \"events\": [\n    {\n      \"event_id\": \"b1c2d3e4-104\",\n      \"type\": \"withdrawal\",\n      \"amount\": 200,\n      \"coin_value\": 200,\n      \"weight_delta_g\": 2.38,\n      \"occurred_at\": null\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/events",
+					"host": ["{{base_url}}"],
+					"path": ["device", "events"]
+				}
+			}
+		},
+		{
+			"name": "07. Lebih dari 20 Event Dalam 1 Batch (Harap: 422)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{device_token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firmware\": \"0.3.0\",\n  \"events\": [\n    {\"event_id\": \"b1c2d3e4-201\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-202\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-203\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-204\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-205\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-206\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-207\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-208\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-209\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-210\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-211\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-212\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-213\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-214\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-215\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-216\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-217\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-218\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-219\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-220\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79},\n    {\"event_id\": \"b1c2d3e4-221\", \"type\": \"deposit\", \"amount\": 100, \"weight_delta_g\": 1.79}\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/events",
+					"host": ["{{base_url}}"],
+					"path": ["device", "events"]
+				}
+			}
+		},
+		{
+			"name": "08. Perubahan Berat Tak Dikenal / unknown_change (Harap: 200 created, needs_review)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{device_token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firmware\": \"0.3.0\",\n  \"events\": [\n    {\n      \"event_id\": \"b1c2d3e4-105\",\n      \"type\": \"unknown_change\",\n      \"amount\": 0,\n      \"coin_value\": null,\n      \"weight_delta_g\": 8.12,\n      \"occurred_at\": \"2026-11-15T03:25:00Z\"\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/events",
+					"host": ["{{base_url}}"],
+					"path": ["device", "events"]
+				}
+			}
+		},
+		{
+			"name": "09. Atur Target dari Alat (PUT /device/goal) (Harap: 200)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{device_token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"target_amount\": 100000,\n  \"set_at\": \"2026-11-15T03:30:00Z\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/goal",
+					"host": ["{{base_url}}"],
+					"path": ["device", "goal"]
+				}
+			}
+		},
+		{
+			"name": "10. Heartbeat & Sinkron Status (GET /device/state) (Harap: 200)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{device_token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/device/state",
+					"host": ["{{base_url}}"],
+					"path": ["device", "state"]
+				}
+			}
+		},
+		{
+			"name": "11. Setoran & Penarikan Beruntun (Harap: 200 saldo sesuai)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{device_token}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firmware\": \"0.3.0\",\n  \"events\": [\n    {\n      \"event_id\": \"b1c2d3e4-106\",\n      \"type\": \"deposit\",\n      \"amount\": 500,\n      \"coin_value\": 500,\n      \"weight_delta_g\": 3.1\n    },\n    {\n      \"event_id\": \"b1c2d3e4-107\",\n      \"type\": \"withdrawal\",\n      \"amount\": 200,\n      \"coin_value\": 200,\n      \"weight_delta_g\": 2.38\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/device/events",
+					"host": ["{{base_url}}"],
+					"path": ["device", "events"]
+				}
+			}
+		}
+	]
+}
