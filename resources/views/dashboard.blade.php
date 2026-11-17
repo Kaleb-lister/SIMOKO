@@ -154,6 +154,73 @@
                 </div>
             </div>
 
+            <!-- Kartu Status Perangkat ESP32 -->
+            <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 mb-4 border-b border-gray-100 gap-2">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl {{ $isOnline ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-500' }} flex items-center justify-center text-xl">
+                            📟
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-sm sm:text-base flex items-center gap-2">
+                                Status Perangkat Celengan (ESP32)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold {{ $isOnline ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
+                                    <span class="w-1.5 h-1.5 me-1.5 rounded-full {{ $isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500' }}"></span>
+                                    {{ $isOnline ? 'ONLINE' : 'MENUNGGU KONEKSI' }}
+                                </span>
+                            </h3>
+                            <p class="text-xs text-gray-500">Informasi konektivitas real-time antara celengan fisik dan server</p>
+                        </div>
+                    </div>
+
+                    <div class="text-xs text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center space-x-2">
+                        <span class="text-gray-400">Endpoint API:</span>
+                        <code class="font-mono text-indigo-600 font-semibold">/api/v1/device/events</code>
+                    </div>
+                </div>
+
+                <!-- Grid Detail Status Alat -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    <div class="p-3 bg-gray-50/75 rounded-lg border border-gray-100">
+                        <span class="text-gray-400 block mb-1">UID Perangkat</span>
+                        <span class="font-mono font-bold text-gray-800 text-sm">{{ $device->device_uid }}</span>
+                    </div>
+
+                    <div class="p-3 bg-gray-50/75 rounded-lg border border-gray-100">
+                        <span class="text-gray-400 block mb-1">Terakhir Terhubung</span>
+                        <span class="font-medium {{ $isOnline ? 'text-emerald-700' : 'text-gray-700' }} text-sm block">
+                            {{ $lastSeenText }}
+                        </span>
+                    </div>
+
+                    <div class="p-3 bg-gray-50/75 rounded-lg border border-gray-100">
+                        <span class="text-gray-400 block mb-1">Versi Firmware</span>
+                        <span class="font-mono font-semibold text-gray-800 text-sm">
+                            {{ $device->firmware_version ? 'v' . $device->firmware_version : 'Belum terlapor' }}
+                        </span>
+                    </div>
+
+                    <div class="p-3 bg-gray-50/75 rounded-lg border border-gray-100">
+                        <span class="text-gray-400 block mb-1">IP Terakhir</span>
+                        <span class="font-mono font-semibold text-gray-800 text-sm">
+                            {{ $device->last_ip ?? '-' }}
+                        </span>
+                    </div>
+                </div>
+
+                @if (! $device->last_seen_at)
+                    <div class="mt-4 p-3.5 bg-amber-50/80 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-start space-x-2.5">
+                        <span class="text-base">💡</span>
+                        <div class="space-y-1">
+                            <p class="font-semibold">Perangkat belum pernah mengirim data</p>
+                            <p class="text-amber-800 text-[11px] leading-relaxed">
+                                Celengan pintar dengan UID <strong>{{ $device->device_uid }}</strong> sudah terdaftar di sistem. Setelah ESP32 Anda dirakit dan dinyalakan dengan token yang sesuai, status di atas akan otomatis berubah menjadi <strong>ONLINE</strong> saat deteksi pertama atau heartbeat dikirim.
+                            </p>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
             <!-- Chart.js: Grafik 14 Hari Terakhir -->
             <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">

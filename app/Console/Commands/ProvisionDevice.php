@@ -16,7 +16,7 @@ class ProvisionDevice extends Command
      *
      * @var string
      */
-    protected $signature = 'simoko:provision {device_uid : Unique identifier for the device (e.g. SIMOKO-0001)} {--username= : Custom username for device owner} {--password= : Custom initial password}';
+    protected $signature = 'simoko:provision {device_uid : Unique identifier for the device (e.g. SIMOKO-0001)} {--username= : Custom username for device owner} {--password= : Custom initial password} {--token= : Custom 40-character device token} {--no-change-credentials : Skip mandatory credential change on first login}';
 
     /**
      * The console command description.
@@ -48,15 +48,16 @@ class ProvisionDevice extends Command
         $characters = '23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
         $password = $this->option('password') ?: substr(str_shuffle(str_repeat($characters, 5)), 0, 10);
 
-        // Generate 40-character random token for device
-        $deviceToken = Str::random(40);
+        // Generate or use custom 40-character token for device
+        $deviceToken = $this->option('token') ?: Str::random(40);
         $tokenHash = hash('sha256', $deviceToken);
+        $mustChange = ! $this->option('no-change-credentials');
 
-        DB::transaction(function () use ($username, $password, $deviceUid, $tokenHash) {
+        DB::transaction(function () use ($username, $password, $deviceUid, $tokenHash, $mustChange) {
             $user = User::create([
                 'username' => $username,
                 'password' => Hash::make($password),
-                'must_change_credentials' => true,
+                'must_change_credentials' => $mustChange,
             ]);
 
             Device::create([
